@@ -37,54 +37,57 @@ dependencies {
     testImplementation "org.mockito.kotlin:mockito-kotlin:${versions.mockitoKotlin}"
     testImplementation "org.koin:koin-test:${versions.koin}"
 }
+def appId = "com.fsck.k9"
+def path = rootProject.file(System.properties['user.home'] + "/.gradle/path.properties")
+def pathProperties = new Properties()
+pathProperties.load(new FileInputStream(path))
+
+def keystorePropertiesFile = rootProject.file(pathProperties["path"] + "/" + appId + ".properties")
+def keystoreProperties = new Properties()
+keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 
 android {
     compileSdkVersion buildConfig.compileSdk
     buildToolsVersion buildConfig.buildTools
 
     defaultConfig {
-        applicationId "com.fsck.k9"
-        testApplicationId "com.fsck.k9.tests"
 
+        applicationId appId
+        testApplicationId "com.fsck.k9.tests"
         versionCode 27037
-        versionName '5.738-SNAPSHOT'
+        versionName '5.738'
 
         // Keep in sync with the resource string array 'supported_languages'
-        resConfigs "in", "br", "ca", "cs", "cy", "da", "de", "et", "en", "en_GB", "es", "eo", "eu", "fr", "gd", "gl",
-                "hr", "is", "it", "lv", "lt", "hu", "nl", "nb", "pl", "pt_PT", "pt_BR", "ru", "ro", "sq", "sk", "sl",
-                "fi", "sv", "tr", "el", "be", "bg", "sr", "uk", "iw", "ar", "fa", "ml", "ko", "zh_CN", "zh_TW", "ja"
+        resConfigs "en", "vi"
 
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
-
         vectorDrawables.useSupportLibrary = true
 
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     signingConfigs {
-        release
+        release {
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+            storeFile file(pathProperties["path"] + "/" + appId + ".jks")
+            storePassword keystoreProperties['storePassword']
+        }
     }
-
     buildTypes {
         release {
-            if (project.hasProperty('storeFile')) {
-                signingConfig signingConfigs.release
-            }
-
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-
             buildConfigField "boolean", "DEVELOPER_MODE", "false"
+            signingConfig signingConfigs.release
         }
 
         debug {
             applicationIdSuffix ".debug"
             testCoverageEnabled rootProject.testCoverage
-
             minifyEnabled false
-
             buildConfigField "boolean", "DEVELOPER_MODE", "true"
+            signingConfig signingConfigs.release
         }
     }
 
@@ -131,15 +134,6 @@ android {
     }
 }
 
-if (project.hasProperty('keyAlias')) {
-    android.signingConfigs.release.keyAlias = keyAlias
-}
-if (project.hasProperty('keyPassword')) {
-    android.signingConfigs.release.keyPassword = keyPassword
-}
-if (project.hasProperty('storeFile')) {
-    android.signingConfigs.release.storeFile = file(storeFile)
-}
-if (project.hasProperty('storePassword')) {
-    android.signingConfigs.release.storePassword = storePassword
-}
+
+
+
