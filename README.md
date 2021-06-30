@@ -1,7 +1,7 @@
 # Android Email #
 + Todo
-    🦝 Switch to Kotlin Code
-    ✔️ Update icon
+    - 🦝 Switch to Kotlin Code
+    - ✔️ Update icon
 
 ## License
 
