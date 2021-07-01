@@ -1,4 +1,5 @@
 # Android Email #
+[![Backup](https://backup.vnapps.com/buildStatus/icon?job=Email&style=flat-square)](https://backup.vnapps.com/job/Email/)
 + Todo
     - 🦝 Switch to Kotlin Code
     - ✔️ Update icon
